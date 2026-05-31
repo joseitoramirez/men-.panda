@@ -6,7 +6,7 @@
   <title>Chuchipanda Wifi Park – Menú Digital</title>
 
   <link rel="preconnect" href="https://fonts.bunny.net" />
-  <link href=\"https://fonts.bunny.net/css?family=plus-jakarta-sans:300,400,500,600,700,800|fraunces:300,400,500,700&display=swap\" rel=\"stylesheet\" />
+  <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:300,400,500,600,700,800|fraunces:300,400,500,700&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -202,16 +202,16 @@
   </div>
 
   <script>
-    // Configuración heredada de tu proyecto de Supabase
-    const API = "https://wxtfppidftmshqaybwhw.supabase.co/rest/v1/products";
+    // Conexión directa a tu NUEVO proyecto de Supabase
+    const API = "https://xnulvqsgjcaiwrqznekn.supabase.co/rest/v1/products";
     const HEADERS = {
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4dGZwcGlkZnRtc2hxYXlid2h3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NzgxMTcsImV4cCI6MjAzMTU1NDExN30.8V35-NWhP4x9N0pX_O14A-L66zR66X89hO88w_O14A8",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4dGZwcGlkZnRtc2hxYXlid2h3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5NzgxMTcsImV4cCI6MjAzMTU1NDExN30.8V35-NWhP4x9N0pX_O14A-L66zR66X89hO88w_O14A8",
+      "apikey": "sb_publishable_GJHdf6xohhgu8fa3MyolDw_5Kf6273S",
+      "Authorization": "Bearer sb_publishable_GJHdf6xohhgu8fa3MyolDw_5Kf6273S",
       "Content-Type": "application/json",
       "Prefer": "return=representation"
     };
 
-    // LECTURA CORREGIDA (ORDEN POR ID EVITA EL ERROR DE COLUMNA NO EXISTENTE)
+    // Lectura de base de datos ordenada por ID para evitar errores de columnas faltantes
     async function dbLoad(){
       const r = await fetch(`${API}?order=id.asc`, { headers: HEADERS });
       if(!r.ok){ const e = await r.json(); throw new Error(e.message || r.statusText); }
@@ -267,7 +267,7 @@
     let adminUnlocked = false;
     const SECRET_PIN = "141210";
 
-    // Parseador Inteligente de Enlaces de Google Drive
+    // Traductor Automático de Enlaces de Google Drive al vuelo
     function parseDriveLink(url) {
       if (!url) return "";
       const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)\b/);
@@ -304,7 +304,7 @@
         allProducts = await dbLoad();
         renderLayouts();
       } catch (err) {
-        showToast(err.message, true);
+        showToast("Error al conectar: " + err.message, true);
       }
     }
 
@@ -347,7 +347,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <h4 class="font-bold text-slate-900 text-sm tracking-tight truncate">${p.name}</h4>
-                  <p class="text-[11px] text-slate-400 font-medium line-clamp-2 mt-0.5 leading-tight">${p.desc || 'Elaborado con ingredientes frescos del día.'}</p>
+                  <p class="text-[11px] text-slate-400 font-medium line-clamp-2 mt-0.5 leading-tight">${p.desc || 'Disponible para consumo inmediato.'}</p>
                 </div>
                 <div class="shrink-0 pl-1">
                   <span class="text-xs font-black text-park-dark bg-emerald-50 border border-emerald-100/60 px-2.5 py-1.5 rounded-xl">$${parseFloat(p.price).toFixed(2)}</span>
@@ -363,7 +363,7 @@
         box.innerHTML = `
           <div class="text-center py-14 bg-white border-2 border-dashed border-slate-200 rounded-3xl p-4">
             <i data-lucide="cookie" class="w-7 h-7 mx-auto mb-2 text-slate-300"></i>
-            <p class="text-xs font-bold text-slate-400">No hay productos disponibles por ahora</p>
+            <p class="text-xs font-bold text-slate-400">No hay existencias activas por el momento</p>
           </div>`;
         if(window.lucide) lucide.createIcons();
       }
@@ -374,7 +374,7 @@
       box.innerHTML = "";
 
       if(allProducts.length === 0) {
-        box.innerHTML = `<p class="text-center py-10 text-slate-400 text-xs font-medium">Catálogo vacío en Supabase. Añade un ítem.</p>`;
+        box.innerHTML = `<p class="text-center py-10 text-slate-400 text-xs font-medium">Catálogo vacío en tu nuevo Supabase.</p>`;
         return;
       }
 
@@ -410,19 +410,18 @@
       if(idx === -1) return;
       
       allProducts[idx].available = !allProducts[idx].available;
-      renderLayouts(); // Render inmediato local para velocidad visual
+      renderLayouts();
 
       try {
         await dbUpdate(id, allProducts[idx]);
-        showToast("Inventario actualizado");
+        showToast("Disponibilidad modificada");
       } catch (err) {
-        showToast("Error de red al actualizar stock", true);
-        allProducts[idx].available = !allProducts[idx].available; // Rollback si falla
+        showToast("Error al sincronizar cambio", true);
+        allProducts[idx].available = !allProducts[idx].available;
         renderLayouts();
       }
     }
 
-    // Modal de Registro & Edición
     const fModal = document.getElementById("form-modal");
     const mBox = document.getElementById("modal-box");
 
@@ -466,21 +465,21 @@
         name: document.getElementById("form-name").value,
         category: document.getElementById("form-category").value,
         price: parseFloat(document.getElementById("form-price").value),
-        image: parseDriveLink(rawImg), // Corrige links de Drive al vuelo antes de subir
+        image: parseDriveLink(rawImg), 
         desc: document.getElementById("form-desc").value,
         available: id ? allProducts.find(p => p.id == id).available : true
       };
 
       closeModal();
-      showToast("Sincronizando con Supabase...");
+      showToast("Actualizando base de datos...");
 
       try {
         if(id) {
           await dbUpdate(id, productData);
-          showToast("Producto modificado con éxito");
+          showToast("Cambios guardados");
         } else {
           await dbInsert(productData);
-          showToast("Producto creado con éxito");
+          showToast("Producto creado");
         }
         reloadData();
       } catch (err) {
@@ -489,11 +488,11 @@
     });
 
     async function deleteProduct(id) {
-      if(confirm("¿Proceder con la remoción permanente de este producto?")) {
+      if(confirm("¿Remover este producto permanentemente de la carta?")) {
         showToast("Eliminando...");
         try {
           await dbDelete(id);
-          showToast("Producto eliminado");
+          showToast("Producto removido");
           reloadData();
         } catch (err) {
           showToast(err.message, true);
@@ -501,7 +500,7 @@
       }
     }
 
-    // Seguridad PIN Administrativo
+    // CONTROL DE SEGURIDAD DEL PANEL
     const pinModal = document.getElementById("pin-modal");
     
     function openPinModal() {
@@ -519,7 +518,7 @@
         closePinModal();
         activateAdminView();
       } else {
-        showToast("PIN Incorrecto", true);
+        showToast("PIN de acceso inválido", true);
       }
     });
     document.getElementById("btn-cancel-pin").addEventListener("click", () => {
@@ -556,7 +555,7 @@
     document.getElementById("btn-close-modal").addEventListener("click", closeModal);
     document.getElementById("btn-cancel-modal").addEventListener("click", closeModal);
 
-    // LÓGICA DE CÓDIGO QR E IMPRESIÓN
+    // CÓDIGO QR E IMPRESIÓN LIMPIA
     function initQR(){
       const currentUrl = window.location.href;
       ["qrcode","qrcode-print"].forEach((id, i) => {
@@ -584,7 +583,7 @@
       setTimeout(() => document.getElementById("print-qr-area").style.display = "none", 500);
     });
 
-    // Carga inicial
+    // Arranque inicial asíncrono
     reloadData();
     initQR();
   </script>
